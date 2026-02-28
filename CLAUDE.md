@@ -55,6 +55,59 @@ This agent makes **AI-powered outbound phone calls** via SIP trunking. The use c
 5. Agent begins conversation; tools fire as needed
 
 ---
+## REQUIREMENTS — Outbound Caller Specification
+
+### Functional Requirements
+
+1. The agent must initiate outbound phone calls via a configured SIP outbound trunk.
+2. The phone number to dial must be passed via LiveKit job metadata (`phone_number`).
+3. The agent must block until the call is answered before starting conversation.
+4. The agent must support:
+   - Transferring calls to a human (`transfer_call`)
+   - Ending calls cleanly (`end_call`)
+   - Handling voicemail detection (`detected_answering_machine`)
+5. The agent must terminate gracefully if the user requests call termination.
+6. The agent must log call lifecycle events.
+
+---
+
+### AI Pipeline Requirements
+
+1. Speech-to-Text must use Deepgram.
+2. LLM must use OpenAI GPT-4o.
+3. Text-to-Speech must use Cartesia.
+4. Voice activity detection must use Silero.
+5. Turn detection must use EnglishModel.
+6. Telephony noise cancellation must use Krisp BVC.
+
+---
+
+### Telephony Requirements
+
+1. A valid `SIP_OUTBOUND_TRUNK_ID` must be configured.
+2. Calls must use TLS transport (port 5061).
+3. Phone numbers must be in E.164 format.
+4. The SIP trunk must authenticate via username/password.
+5. Call must fail gracefully if SIP connection fails.
+
+---
+
+### Operational Requirements
+
+1. The agent must run as a LiveKit Worker.
+2. The agent must auto-register as `outbound-caller`.
+3. Dispatch jobs must pass metadata as JSON.
+4. The system must support local dev mode (`python3 agent.py dev`).
+5. The worker must reconnect on transient LiveKit disconnections.
+
+---
+
+### Compliance & Safety Requirements
+
+1. No persistent storage of call audio.
+2. No persistent storage of transcripts unless explicitly configured.
+3. The agent must not provide medical or financial advice beyond scheduling scope.
+4. The agent must respect call termination requests immediately.
 
 ## HOW — Working on This Project
 
